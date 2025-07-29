@@ -59,4 +59,7 @@ export class Property implements IProperty {
 }
 
 export type PropertyDocument = Property & Document;
-export const PropertySchema = SchemaFactory.createForClass(Property);
+// Create the schema
+const schema = SchemaFactory.createForClass(Property);
+
+export const PropertySchema = schema;

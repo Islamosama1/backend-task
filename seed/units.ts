@@ -4,7 +4,8 @@ import { Types } from 'mongoose';
 
 export const properties = [
   {
-    organizationId: new Types.ObjectId(),
+    _id: new Types.ObjectId().toString(),
+    organizationId: new Types.ObjectId().toString(),
     bua: 120,
     totalBua: 150,
     landArea: 200,
@@ -14,11 +15,12 @@ export const properties = [
     buildingId: 'BLD-001',
     unitId: 'UNIT-101',
     amenities: ['Swimming Pool', 'Gym', 'Security', 'Parking'],
-    compoundId: new Types.ObjectId(),
+    compoundId: new Types.ObjectId().toString(),
     availabilityDays: ['Saturday', 'Sunday'],
   },
   {
-    organizationId: new Types.ObjectId(),
+    _id: new Types.ObjectId().toString(),
+    organizationId: new Types.ObjectId().toString(),
     bua: 85,
     totalBua: 100,
     landArea: 150,
@@ -28,11 +30,12 @@ export const properties = [
     buildingId: 'BLD-002',
     unitId: 'UNIT-202',
     amenities: ['Garden', 'Playground', '24/7 Security', 'Underground Parking'],
-    compoundId: new Types.ObjectId(),
+    compoundId: new Types.ObjectId().toString(),
     availabilityDays: ['Monday', 'Tuesday', 'Thursday'],
   },
   {
-    organizationId: new Types.ObjectId(),
+    _id: new Types.ObjectId().toString(),
+    organizationId: new Types.ObjectId().toString(),
     bua: 200,
     totalBua: 250,
     landArea: 300,
@@ -42,7 +45,7 @@ export const properties = [
     buildingId: 'BLD-003',
     unitId: 'UNIT-303',
     amenities: ['Private Pool', 'Smart Home', 'Garden', 'Security', 'Parking'],
-    compoundId: new Types.ObjectId(),
+    compoundId: new Types.ObjectId().toString(),
     availabilityDays: [
       'Saturday',
       'Sunday',
@@ -53,7 +56,8 @@ export const properties = [
     ],
   },
   {
-    organizationId: new Types.ObjectId(),
+    _id: new Types.ObjectId().toString(),
+    organizationId: new Types.ObjectId().toString(),
     bua: 65,
     totalBua: 80,
     landArea: 100,
@@ -63,7 +67,7 @@ export const properties = [
     buildingId: 'BLD-004',
     unitId: 'UNIT-404',
     amenities: ['Security', 'Parking', 'Gym'],
-    compoundId: new Types.ObjectId(),
+    compoundId: new Types.ObjectId().toString(),
     availabilityDays: [
       'Saturday',
       'Sunday',
@@ -74,7 +78,8 @@ export const properties = [
     ],
   },
   {
-    organizationId: new Types.ObjectId(),
+    _id: new Types.ObjectId().toString(),
+    organizationId: new Types.ObjectId().toString(),
     bua: 150,
     totalBua: 180,
     landArea: 250,
@@ -91,7 +96,7 @@ export const properties = [
       'Garden',
       'Playground',
     ],
-    compoundId: new Types.ObjectId(),
+    compoundId: new Types.ObjectId().toString(),
     availabilityDays: [
       'Saturday',
       'Sunday',
