@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JWT_SECRET, JWT_EXPIRES_IN } from './constants';
+import { JWT_SECRET, JWT_EXPIRES_IN } from './constants/constants';
 
 export interface User {
   userId: string;
@@ -9,11 +9,10 @@ export interface User {
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService) { }
 
   async validateUser(email: string, password: string): Promise<any> {
-    // In a real application, you would validate the user against your database
-    // This is a simplified example
+    // Just for testing
     if (email && password) {
       return { userId: '1', email };
     }

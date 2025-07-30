@@ -12,7 +12,7 @@ import { AppModule } from '../src/app.module';
 import { PropertyViewing, PropertyViewingSchema } from '../src/database/schemas/property-viewing.schema';
 import { Property, PropertySchema } from '../src/database/schemas/property.schema';
 import { JwtStrategy } from '../src/auth/strategies/jwt.strategy';
-import { JWT_SECRET } from '../src/auth/constants';
+import { JWT_SECRET } from '../src/auth/constants/constants';
 
 describe('PropertyViewingsController (e2e)', () => {
   let app: INestApplication;
@@ -28,7 +28,7 @@ describe('PropertyViewingsController (e2e)', () => {
     // Setup in-memory MongoDB
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
-    
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
@@ -92,7 +92,7 @@ describe('PropertyViewingsController (e2e)', () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 2);
       futureDate.setUTCHours(10, 0, 0, 0);
-      
+
       const endTime = new Date(futureDate);
       endTime.setUTCHours(10, 30, 0, 0);
 
@@ -125,7 +125,7 @@ describe('PropertyViewingsController (e2e)', () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 2);
       futureDate.setUTCHours(11, 0, 0, 0);
-      
+
       const endTime = new Date(futureDate);
       endTime.setUTCHours(11, 30, 0, 0);
 
@@ -138,7 +138,7 @@ describe('PropertyViewingsController (e2e)', () => {
           startTime: futureDate.toISOString(),
           endTime: endTime.toISOString(),
         });
-      
+
       expect(firstResponse.status).toBe(201);
 
       // Second request with overlapping time should fail
@@ -151,7 +151,7 @@ describe('PropertyViewingsController (e2e)', () => {
           endTime: endTime.toISOString(),
           notes: 'Test viewing',
         });
-      
+
       expect(response.status).toBe(409);
 
       expect(response.body.message).toContain('already a viewing scheduled');
@@ -164,7 +164,7 @@ describe('PropertyViewingsController (e2e)', () => {
       const testDate = new Date();
       testDate.setDate(testDate.getDate() + 2);
       testDate.setUTCHours(0, 0, 0, 0);
-      
+
       const response = await request(app.getHttpServer())
         .get(`/property-viewings/available-slots/${testProperty._id}`)
         .query({ date: testDate.toISOString().split('T')[0] })
@@ -192,7 +192,7 @@ describe('PropertyViewingsController (e2e)', () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 2);
       futureDate.setUTCHours(14, 0, 0, 0);
-      
+
       const endTime = new Date(futureDate);
       endTime.setUTCHours(14, 30, 0, 0);
 
@@ -205,7 +205,7 @@ describe('PropertyViewingsController (e2e)', () => {
           startTime: futureDate.toISOString(),
           endTime: endTime.toISOString(),
         });
-      
+
       const viewing = scheduleResponse.body.data;
 
       // Cancel the viewing

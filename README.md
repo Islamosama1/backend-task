@@ -2,6 +2,11 @@
 
 A NestJS-based backend service for managing property viewings in a real estate platform. This service allows potential buyers or renters to schedule property viewings while ensuring no scheduling conflicts occur.
 
+## 📋 Swagger Documentation
+
+You can access the Swagger documentation at `http://localhost:3000/api`.
+<img src="./assets/image.png" alt="Swagger Documentation">
+
 ## 📋 Table of Contents
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
@@ -213,7 +218,6 @@ The application can be configured using environment variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `PORT` | Application port | 3000 |
-| `MONGODB_URI` | MongoDB connection string | mongodb://localhost:27017/property-viewings |
 | `JWT_SECRET` | Secret key for JWT signing | (required) |
 | `JWT_EXPIRES_IN` | JWT expiration time | 1h |
 

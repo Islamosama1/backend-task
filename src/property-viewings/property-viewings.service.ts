@@ -1,15 +1,12 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { PropertyViewing, ViewingStatus } from '../database/schemas/property-viewing.schema';
-import { Property } from '../database/schemas/property.schema';
+import { PropertyViewing } from '../database/schemas/property-viewing.schema';
 import { PropertiesService } from '../properties/properties.service';
+import { ViewingStatus } from '../database/enums/viewing-status.enum';
+import { AvailableSlot } from './interfaces/available-slots.interface';
 
-export interface AvailableSlot {
-  startTime: Date;
-  endTime: Date;
-  available: boolean;
-}
+
 
 @Injectable()
 export class PropertyViewingsService {
@@ -27,22 +24,18 @@ export class PropertyViewingsService {
     notes?: string,
   ): Promise<PropertyViewing> {
     try {
-      // Validate the time slot
       this.validateTimeSlot(startTime, endTime);
 
-      // Check if the property exists
       const property = await this.propertiesService.findById(propertyId);
       if (!property) {
         throw new NotFoundException(`Property with ID ${propertyId} not found`);
       }
 
-      // Check for conflicting viewings
       const hasConflict = await this.hasViewingConflict(propertyId, startTime, endTime);
       if (hasConflict) {
         throw new ConflictException('There is already a viewing scheduled for this time slot');
       }
 
-      // Create the viewing document directly with create()
       const viewing = await this.propertyViewingModel.create({
         propertyId: new Types.ObjectId(propertyId),
         userId,
@@ -51,13 +44,11 @@ export class PropertyViewingsService {
         notes,
         status: ViewingStatus.PENDING,
       });
-      
-      // Convert to plain object and remove Mongoose-specific properties
-      // Using JSON.parse and JSON.stringify to break circular references
+
       return JSON.parse(JSON.stringify(viewing.toObject({ getters: true, versionKey: false })));
     } catch (error) {
       console.error('Error scheduling viewing:', error);
-      throw error; // Re-throw the error to be handled by the controller
+      throw error;
     }
   }
 
@@ -66,13 +57,11 @@ export class PropertyViewingsService {
     date: Date,
     durationInMinutes: number = 30,
   ): Promise<AvailableSlot[]> {
-    // Check if the property exists
     const property = await this.propertiesService.findById(propertyId);
     if (!property) {
       throw new NotFoundException(`Property with ID ${propertyId} not found`);
     }
 
-    // Get the start and end of the requested day
     const startOfDay = new Date(date);
     startOfDay.setHours(9, 0, 0, 0); // Start at 9 AM
 
@@ -118,11 +107,10 @@ export class PropertyViewingsService {
     const viewings = await this.propertyViewingModel
       .find({ userId })
       .sort({ startTime: 1 })
-      .populate('propertyId', 'title address price') // Only include necessary fields
-      .lean() // Convert to plain JavaScript object
+      .populate('propertyId', 'title address price')
+      .lean()
       .exec();
 
-    // Safely convert to plain object to prevent circular references
     return JSON.parse(JSON.stringify(viewings));
   }
 
@@ -150,11 +138,8 @@ export class PropertyViewingsService {
       propertyId,
       status: { $ne: ViewingStatus.CANCELLED },
       $or: [
-        // New viewing starts during an existing viewing
         { startTime: { $lt: endTime, $gte: startTime } },
-        // New viewing ends during an existing viewing
         { endTime: { $gt: startTime, $lte: endTime } },
-        // New viewing completely contains an existing viewing
         { $and: [{ startTime: { $lte: startTime } }, { endTime: { $gte: endTime } }] },
       ],
     };

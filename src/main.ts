@@ -13,10 +13,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
 
-  // Enable CORS
   app.enableCors();
 
-  // Enable global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -28,7 +26,6 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Property Viewing Scheduler API')
     .setDescription('API for scheduling property viewings')
@@ -42,7 +39,7 @@ async function bootstrap() {
         description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
+      'JWT-auth',
     )
     .build();
 
@@ -53,7 +50,6 @@ async function bootstrap() {
     },
   });
 
-  // Enable global class serializer interceptor
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
@@ -61,7 +57,6 @@ async function bootstrap() {
   const appPort =
     process.env.PORT || configService.get<number>('app.port') || 8080;
 
-  // Log all requests
   app.use((req, res, next) => {
     logger.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
@@ -70,7 +65,6 @@ async function bootstrap() {
   await app.listen(appPort);
   logger.log(`Application is running on: http://localhost:${appPort}`);
 
-  // seed database
   const propertyModel = app.get<Model<Property>>(getModelToken(Property.name));
   await seedUnits(propertyModel);
   logger.log('Database seeded successfully');

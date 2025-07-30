@@ -7,14 +7,13 @@ import {
   Delete,
   Query,
   ParseIntPipe,
-  ParseUUIDPipe,
   BadRequestException,
   UseGuards,
   Request,
-  HttpStatus,
 } from '@nestjs/common';
 import { PropertyViewingsService } from './property-viewings.service';
-import { PropertyViewing, ViewingStatus } from '../database/schemas/property-viewing.schema';
+import { AvailableSlot } from './interfaces/available-slots.interface';
+import { PropertyViewing } from '../database/schemas/property-viewing.schema';
 import { HTTPResponse } from '../common/http/response';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
@@ -25,67 +24,10 @@ import {
   ApiParam,
   ApiQuery,
   ApiBody,
-  ApiProperty,
-  ApiPropertyOptional
 } from '@nestjs/swagger';
 
-import { IsString, IsDateString, IsOptional, IsNotEmpty, IsEnum, IsNumber, Min, Max } from 'class-validator';
+import { ScheduleViewingRequestDto } from './dto/schedule-viewing.dto';
 
-class ScheduleViewingRequestDto {
-  @ApiProperty({
-    description: 'ID of the property to schedule a viewing for',
-    example: '507f1f77bcf86cd799439011'
-  })
-  @IsString()
-  @IsNotEmpty()
-  propertyId: string;
-
-  @ApiProperty({
-    description: 'Start time of the viewing in ISO format',
-    example: '2025-08-01T10:00:00.000Z'
-  })
-  @IsDateString()
-  @IsNotEmpty()
-  startTime: string;
-
-  @ApiProperty({
-    description: 'End time of the viewing in ISO format',
-    example: '2025-08-01T10:30:00.000Z'
-  })
-  @IsDateString()
-  @IsNotEmpty()
-  endTime: string;
-
-  @ApiPropertyOptional({
-    description: 'Additional notes for the viewing',
-    example: 'Interested in the property for investment purposes'
-  })
-  @IsString()
-  @IsOptional()
-  notes?: string;
-}
-
-class AvailableSlotsQueryDto {
-  @ApiProperty({
-    description: 'Date in YYYY-MM-DD format to check for available slots',
-    example: '2025-08-01'
-  })
-  @IsString()
-  @IsNotEmpty()
-  date: string;
-
-  @ApiPropertyOptional({
-    description: 'Duration of the slot in minutes (default: 30)',
-    minimum: 30,
-    maximum: 120,
-    default: 30
-  })
-  @IsNumber()
-  @Min(30)
-  @Max(120)
-  @IsOptional()
-  duration?: number = 30;
-}
 
 @ApiTags('Property Viewings')
 @Controller('property-viewings')
@@ -165,7 +107,6 @@ export class PropertyViewingsController {
   ): Promise<HTTPResponse<PropertyViewing>> {
     const userId = req.user.userId; // Assuming JWT contains userId
     const { propertyId, startTime, endTime, notes } = scheduleViewingDto;
-    console.log(req.user)
     // Validate dates
     if (isNaN(new Date(startTime).getTime()) || isNaN(new Date(endTime).getTime())) {
       throw new BadRequestException('Invalid date format');
@@ -253,7 +194,7 @@ export class PropertyViewingsController {
     @Param('propertyId') propertyId: string,
     @Query('date') date: string,
     @Query('duration', new ParseIntPipe({ optional: true })) duration: number = 30,
-  ) {
+  ): Promise<HTTPResponse<AvailableSlot[]>> {
     const parsedDate = new Date(date);
     if (isNaN(parsedDate.getTime())) {
       throw new BadRequestException('Invalid date format. Use YYYY-MM-DD');
